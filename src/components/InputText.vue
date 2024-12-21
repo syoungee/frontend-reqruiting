@@ -35,7 +35,11 @@ const clearInput = () => {
     {{ label }}
     <div class="relative w-full">
       <input
-        class="w-full border-gray-400 border rounded-md h-10 px-4 pr-10 hover:border-blue-400 invalid:border-red-500 focus:border-green-400 focus:outline-none"
+        class="w-full border rounded-md h-10 px-4 pr-10 hover:border-blue-400 focus:border-green-400 focus:outline-none"
+        :class="{
+          'border-gray-400': !errorMessage,  // 기본 회색 테두리 (에러 메시지가 없으면)
+          'border-red-500 invalid': errorMessage  // 에러 메시지가 있을 때 빨간 테두리
+        }"
         type="text"
         autocomplete="off"
         v-model="model"
