@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import InputText from "./InputText.vue";
 
 const userId = ref("");
@@ -7,19 +7,40 @@ const name = ref("");
 const organization = ref("");
 
 // Validation rules
-const userIdRules = [(value: string) => /^[a-zA-Z0-9]+$/.test(value), (value: string) => value.trim() !== ''];
-const nameRules = [(value: string) => !/[\\/:*?"<>|]/.test(value), (value: string) => value.trim() !== ''];
-const organizationRules = [(value: string) => !/[\\/:*?"<>|]/.test(value)];
+const userIdRules = [
+  (value: string) => /^[a-zA-Z0-9]+$/.test(value),
+  (value: string) => value.trim() !== '',
+  (value: string) => !/[가-힣]/.test(value),
+];
+const nameRules = [
+  (value: string) => !/[\\/:*?"<>|]/.test(value),
+  (value: string) => value.trim() !== '',
+];
+const organizationRules = [
+  (value: string) => !/[\\/:*?"<>|]/.test(value),
+];
 
 // Validation Messages
 const idValidationMessage = 'UserId에는 알파벳과 숫자만 허용되며 반드시 작성해야 합니다.';
 const nameValidationMessage = 'Name에는 \\ / : * ? " < > | 특수문자를 사용할 수 없으며 반드시 작성해야 합니다.';
 const organizationValidationMessage = 'Organization에는 \\ / : * ? " < > | 특수문자를 사용할 수 없습니다.';
 
-// Validation state
+const errorMessages = ref({
+  userId: '',
+  name: '',
+  organization: '',
+});
+
 const isUserIdValid = computed(() => userIdRules.every(rule => rule(userId.value)));
 const isNameValid = computed(() => nameRules.every(rule => rule(name.value)));
 const isOrganizationValid = computed(() => organizationRules.every(rule => rule(organization.value)));
+
+
+watch([userId, name, organization], () => {
+  errorMessages.value.userId = isUserIdValid.value ? '' : idValidationMessage;
+  errorMessages.value.name = isNameValid.value ? '' : nameValidationMessage;
+  errorMessages.value.organization = isOrganizationValid.value ? '' : organizationValidationMessage;
+});
 
 // Form validation (all fields must be valid to submit)
 const isFormValid = computed(() => isUserIdValid.value && isNameValid.value && isOrganizationValid.value);
