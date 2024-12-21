@@ -1,9 +1,29 @@
 <script setup lang="ts">
+import { ref, computed, watch } from 'vue';
+
 type InputTextProps = {
   label: string;
+  validationRules: Array<(value: string) => boolean>;
+  validationMessage: string;
 };
+
+const props = defineProps<InputTextProps>();
 const model = defineModel<string>();
-defineProps<InputTextProps>();
+const errorMessage = ref('');
+
+// 유효성 검사 로직: rules을 따라 검사 후 오류 메시지 반환
+const isValid = computed(() => {
+  return props.validationRules.every((rule) => rule(model.value));
+});
+
+// 유효하지 않으면 errorMessage 설정
+watch(isValid, (valid) => {
+  if (valid) {
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = props.validationMessage;
+  }
+});
 
 const clearInput = () => {
   model.value = '';
@@ -30,5 +50,7 @@ const clearInput = () => {
         ✕
       </button>
     </div>
+    <!-- Validation message -->
+    <span v-if="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</span>
   </label>
 </template>
