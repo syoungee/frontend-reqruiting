@@ -12,9 +12,9 @@ const nameRules = [(value: string) => !/[\\/:*?"<>|]/.test(value), (value: strin
 const organizationRules = [(value: string) => !/[\\/:*?"<>|]/.test(value)];
 
 // Validation Messages
-const idValidationMessage = 'UserId에는 알파벳과 숫자만 허용되며 반드시 작성해야 합니다.';
-const nameValidationMessage = 'Name에는 \\ / : * ? " < > | 특수문자를 사용할 수 없으며 반드시 작성해야 합니다.';
-const organizationValidationMessage = 'Organization에는 \\ / : * ? " < > | 특수문자를 사용할 수 없습니다.';
+const idValidationMessage = '아이디는 알파벳과 숫자만 허용되며 반드시 작성해야 합니다.';
+const nameValidationMessage = '이름은 \\ / : * ? " < > | 특수문자를 사용할 수 없으며 반드시 작성해야 합니다.';
+const organizationValidationMessage = '조직명에는 \\ / : * ? " < > | 특수문자를 사용할 수 없습니다.';
 
 const errorMessages = ref({
   userId: '',
@@ -38,8 +38,8 @@ const isFormValid = computed(() => isUserIdValid.value && isNameValid.value && i
 const handleSubmit = () => {
   if (isFormValid.value) {
     alert(`User ID: ${userId.value}
-    Name: ${name.value}
-    Organization: ${organization.value}`);
+Name: ${name.value}
+Organization: ${organization.value}`);
   } else {
     alert('Please fill in the form correctly.');
   }
