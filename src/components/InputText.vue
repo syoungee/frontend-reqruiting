@@ -5,28 +5,29 @@ type InputTextProps = {
   label: string;
   validationRules: Array<(value: string) => boolean>;
   validationMessage: string;
+  modelValue: string;
 };
 
 const props = defineProps<InputTextProps>();
-const model = ref<string>('');  // ref를 사용하여 value를 모델링
+const model = ref(props.modelValue);
 const errorMessage = ref('');
 
-// 유효성 검사 로직: rules을 따라 검사 후 오류 메시지 반환
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: string): void;
+}>();
+
 const isValid = computed(() => {
   return props.validationRules.every((rule) => rule(model.value));
 });
 
-// 실시간 유효성 검사: model 값이 변경될 때마다 검사
-watch(model, () => {
-  if (isValid.value) {
-    errorMessage.value = '';  // 유효하다면 오류 메시지 비우기
-  } else {
-    errorMessage.value = props.validationMessage;  // 유효하지 않으면 메시지 설정
-  }
+watch(model, (newValue) => {
+  emit('update:modelValue', newValue);
+  errorMessage.value = isValid.value ? '' : props.validationMessage;
 });
 
 const clearInput = () => {
-  model.value = ''; // 입력값 초기화
+  model.value = '';
+  emit('update:modelValue', '');
 };
 </script>
 
@@ -37,8 +38,8 @@ const clearInput = () => {
       <input
         class="w-full border rounded-md h-10 px-4 pr-10 hover:border-blue-400 focus:border-green-400 focus:outline-none"
         :class="{
-          'border-gray-400': !errorMessage,  // 기본 회색 테두리 (에러 메시지가 없으면)
-          'border-red-500 invalid': errorMessage  // 에러 메시지가 있을 때 빨간 테두리
+          'border-gray-400': !errorMessage,
+          'border-red-500 invalid': errorMessage,
         }"
         type="text"
         autocomplete="off"
@@ -46,7 +47,7 @@ const clearInput = () => {
       />
       <!-- Clear button -->
       <button
-        v-if="model && model.length > 0" 
+        v-if="model && model.length > 0"
         @click="clearInput"
         type="button"
         class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
