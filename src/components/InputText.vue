@@ -11,6 +11,7 @@ type InputTextProps = {
 const props = defineProps<InputTextProps>();
 const model = ref(props.modelValue);
 const errorMessage = ref('');
+const isFocused = ref(false);
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string): void;
@@ -36,14 +37,18 @@ const clearInput = () => {
     {{ label }}
     <div class="relative w-full">
       <input
-        class="w-full border rounded-md h-10 px-4 pr-10 hover:border-blue-400 focus:border-green-400 focus:outline-none"
+        class="w-full border rounded-md h-10 px-4 pr-10 hover:border-blue-400 focus:outline-none"
         :class="{
-          'border-gray-400': !errorMessage,
-          'border-red-500 invalid': errorMessage,
+          'border-gray-400': !errorMessage && !isFocused,
+          'border-red-500': errorMessage && !isFocused,
+          'border-red-700': errorMessage && isFocused,
+          'focus:border-green-400': !errorMessage && isFocused,
         }"
         type="text"
         autocomplete="off"
         v-model="model"
+        @focus="isFocused = true"
+        @blur="isFocused = false"
       />
       <!-- Clear button -->
       <button
