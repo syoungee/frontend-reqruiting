@@ -18,6 +18,7 @@ const emit = defineEmits<{
 }>();
 
 const isValid = computed(() => {
+  console.log('validation check!');
   return props.validationRules.every((rule) => rule(model.value));
 });
 
